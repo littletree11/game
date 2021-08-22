@@ -1,0 +1,11 @@
+# dirs
+saves/
+gui/
+cache/
+.vscode/
+images/
+
+# files
+*.rpyc
+*.png
+*.ttf
