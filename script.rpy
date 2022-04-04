@@ -1,192 +1,43 @@
-﻿# 游戏的脚本可置于此文件中。
+﻿# # 游戏的脚本可置于此文件中。
 
-# 声明此游戏使用的角色。颜色参数可使角色姓名着色。
-init python:
-    import pygame
-    import sys,random,math,os,platform
-    BLACK = (0,0,0)
-    WHITE = (255,255,255)
-    GREEN = (122,122,122)
-    BASE = 400
-    class Groups(pygame.sprite.Group):
-        def __init__(self, **args):
-            super(Groups, self).__init__()
-        def draw(self, surface):
-            for s in self.sprites():
-                surface.blit(s.image, s.rect.topleft)
-    # 实体类,读取图片
-    class DObject(pygame.sprite.Sprite):
-        def __init__(self, image_name, image_number, image_width, image_height):
-            super(DObject, self).__init__()
-            self.image_name = image_name
-            self.image_number = image_number
-            self.image_width = image_width
-            self.image_height = image_height
-            # 加载并转换图片
-            self.images = []
-            file_tmp = renpy.file(image_name)
-            img = pygame.image.load(file_tmp).convert_alpha()
-            for i in range(self.image_number):
-                self.images.append(img.subsurface((i*image_width,0,image_width,image_height)).copy())
+# # 声明此游戏使用的角色。颜色参数可使角色姓名着色。
+# define e = Character("艾琳")
 
-    class Dino(DObject):
-        def __init__(self, base, **args):
-            super(Dino, self).__init__(**args)
-            self.speed = -8
-            self.du = 180
-            self.h = 100
-            self.jumping = False
-            # self.g = -1 * (self.speed/self.du)
-            self.g = 0.1
-            # self.t = math.sqrt((2*self.h)/self.g)/self.du
-            self.t = 3
-            self.base = base - self.image_height
-            self.v = 0
-            self.image = self.images[0]
-            self.index = 0
-            self.frame = 0
-            self.rect = self.image.get_rect()
-            self.rect.topleft = (80, self.base)
+# # 游戏在此开始。
 
-        def update(self,dtime):
-            t = self.t
-            if self.jumping:
-                # if self.rect.top < self.base:
-                self.index = 0
-                self.rect.top += int(self.v * t + 0.5 * self.g * (t**2))
-                self.v += self.g * t
-                # else:
-                if self.rect.top > self.base:
-                    self.rect.top = self.base
-                    self.v = 0
-                    self.jumping = False
-            if self.index > self.image_number - 1:
-                self.index = 0
-            if self.frame > 9:
-                self.image = self.images[self.index]
-                self.index += 1
-                self.frame = 0
-            self.frame += 1
-        
-        def jump(self):
-            if not self.jumping:
-                if not self.rect.top < self.base:
-                    self.jumping = True
-                    self.v = self.speed
-    # 随机出现的树类
-    class Tree(DObject):
-        def __init__(self, base, **args):
-            super(Tree, self).__init__(**args)
-            self.speed = 10/2
-            self.base = base - self.image_height
-            self.image = self.images[random.randint(0, self.image_number-1)]
-            self.rect = self.image.get_rect()
-            self.rect.topleft = [1280, self.base]
-        
-        def update(self):
-            self.rect.left -= self.speed
-            if self.rect.left < -20:
-                self.kill()
+# label start:
 
-    class Cloud(DObject):
-        def __init__(self, base, **args):
-            super(Cloud, self).__init__(**args)
-            self.speed = 2
-            self.base = base - self.image_height - 100
-            self.image = self.images[random.randint(0,self.image_number-1)]
-            self.rect = self.image.get_rect()
-            self.rect.topleft = [800, self.base]
-        def update(self):
-            self.rect.left -= self.speed
-            if self.rect.left < -20:
-                self.kill()
+#     # 显示一个背景。此处默认显示占位图，但您也可以在图片目录添加一个文件
+#     # （命名为“bg room.png”或“bg room.jpg”）来显示。
 
+#     scene bg room
 
-    class MiniDino(renpy.Displayable):
-        def __init__(self):
-            super(MiniDino, self).__init__()
-            self.score = 0
-            self.last_tree = 0
-            self.oldst = None
-            # self.fonts = pygame.font.SysFont('arial', 16)
-            # self.base_line = Solid(WHITE, xsize = 1280, ysize=10)
-            self.base_line = pygame.Surface((1280,10))
-            self.base_line.fill(BLACK)
-            self.di = Dino(BASE,image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90)
-            self.tree_group = Groups()
-            self.tree_group.add(Tree(BASE,image_name='images/kohi_tree.png',image_number=2,image_width=43,image_height=90))
-            self.cloud_group = Groups()
-            self.cloud_group.add(Cloud(BASE, image_name='images/kohi_cloud.png',image_number=2,image_width=90,image_height=90))
+#     # 显示角色立绘。此处使用了占位图，但您也可以在图片目录添加命名为
+#     # “eileen happy.png”的文件来将其替换掉。
 
-        def render(self, width, heigh, st, at):
-            # score_face = self.fonts.render('Score:'+str(self.score), True, BLACK)
-            score = renpy.render(Text('Score:'+str(self.score)), 100,300,0,0)
-            if self.oldst == None:
-                self.oldst = st
-                dtime = 0.01
-            else:
-                dtime = st - self.oldst
+#     show eileen happy
 
-            screen = renpy.Render(width, heigh)
-            if len(self.tree_group.sprites()) <= 2 and self.last_tree > 60:
-                if random.randint(1, 60) < 3:
-                    self.tree_group.add(Tree(BASE,image_name='images/kohi_tree.png',image_number=2,image_width=43,image_height=90))
-                    self.last_tree = 0
-            if len(self.cloud_group.sprites()) < 1:
-                self.cloud_group.add(Cloud(BASE, image_name='images/kohi_cloud.png',image_number=2,image_width=90,image_height=90))
-            # 更新位置
-            if not pygame.sprite.spritecollide(self.di, self.tree_group, False):
-                self.di.update(dtime)
-                self.tree_group.update()
-                self.cloud_group.update()
-                self.score += 10
+#     # 此处显示各行对话。
 
-            self.tree_group.draw(screen)
-            self.cloud_group.draw(screen)
-            screen.blit(score, (1000,100))
-            screen.blit(self.base_line, (0,BASE))
-            screen.blit(self.di.image, self.di.rect.topleft)
-            
-            self.last_tree += 1
+#     e "您已创建一个新的 Ren'Py 游戏。"
+#     window hide
+#     hide eileen
+#     $ quick_menu =False
 
-            renpy.redraw(self, 0)
-            return screen
+#     # call screen dino
+#     # call screen musicgame
+#     call screen watermelon
 
-        def event(self, ev, x, y , st):
-            if ev.type == pygame.KEYDOWN:
-                if ev.key == pygame.K_SPACE:
-                    self.di.jump()
+#     $ quick_menu = True
 
-screen dino():
-    default d = MiniDino()
-    add d
+#     show eileen happy
 
-define e = Character("艾琳")
+#     e "score [_return]" 
 
-# 游戏在此开始。
+#     e "maze" 
+#     call screen maze
 
-label start:
+#     e "当您完善了故事、图片和音乐之后，您就可以向全世界发布了！"
 
-    # 显示一个背景。此处默认显示占位图，但您也可以在图片目录添加一个文件
-    # （命名为“bg room.png”或“bg room.jpg”）来显示。
-
-    scene bg room
-
-    # 显示角色立绘。此处使用了占位图，但您也可以在图片目录添加命名为
-    # “eileen happy.png”的文件来将其替换掉。
-
-    show eileen happy
-
-    # 此处显示各行对话。
-
-    e "您已创建一个新的 Ren'Py 游戏。"
-    window hide
-    hide eileen
-    $ quick_menu =False
-
-    call screen dino
-
-    e "当您完善了故事、图片和音乐之后，您就可以向全世界发布了！"
-
-    # 此处为游戏结尾。
-    return
+#     # 此处为游戏结尾。
+#     return

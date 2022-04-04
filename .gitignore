@@ -3,7 +3,8 @@ saves/
 gui/
 cache/
 .vscode/
-images/
+temp/
+python-packages/
 
 # files
 *.rpyc
