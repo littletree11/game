@@ -161,6 +161,26 @@ init python:
     ## 录或子目录中的 ogg 文件，“**.psd”匹配工程中任何位置的 psd 文件。
 
     ## 将文件列为 None 来使其从已生成的分发版中排除。
+    # 定义两个归档文件。
+    build.archive("scripts", "all")
+    build.archive("images", "all")
+    build.archive("audio", "all")
+    build.archive("video", "all")
+    build.archive("fonts", "all")
+    # 将脚本放入scripts归档。
+    build.classify("game/**.rpy", "scripts")
+    build.classify("game/**.rpyc", "scripts")
+
+    # 将图片放入images归档。
+    build.classify("game/**.jpg", "images")
+    build.classify("game/**.png", "images")
+
+    # archive audio
+    build.classify("game/**.mp3", "audio")
+    build.classify("game/**.wav", "audio")
+
+    # archive video
+    build.classify("game/**.webm", "video")
 
     build.classify('**~', None)
     build.classify('**.bak', None)
