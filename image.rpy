@@ -1,6 +1,7 @@
 image black = "#000"
 image white = "#fff"
 image green = "#6ee2b4"
+image gray = "#777676"
 
 
 # part02 密室寻找物品 

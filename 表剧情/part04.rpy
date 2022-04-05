@@ -97,6 +97,7 @@ label part4:
     #─────────────────
     #─────────────────
     hide 小东
+    scene gray
     $ quick_menu = False
 
     call screen maze

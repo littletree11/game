@@ -24,7 +24,7 @@ init 2 python:
             # self.rect.x = self.x
             # self.rect.y = self.y
             # self.text = self.font.render(self.content, True, self.fg)
-            self.text = Text(self.content, size=fontsize, color=self.fg)
+            self.text = Text(self.content, size=fontsize, color=self.fg, font="浪漫雅圆.ttf")
             # self.text_rect = self.text.get_rect(center=(self.width / 2, self.height / 2))
             # self.text_rect = self.text.canvas().get_surface()
             self.text_rect = pygame.Rect(0,0,self.width, self.height)
@@ -72,7 +72,27 @@ init 2 python:
             self.y = 0
             self.life = True
             self.game = game
-    
+    # 音符消失动画
+    class NoteFade(DObject):
+        def __init__(self, posx, posy, **args):
+            super(NoteFade, self).__init__(**args)
+            self.rect = pygame.Rect(0,0,self.image_width,self.image_height)
+            self.rect.topleft = (posx,posy)
+            self.frames = self.image_number
+            self.total_life = 1.0
+            self.interval = self.total_life / self.frames
+            self.life = 0
+            self.frame = 0
+            self.image = self.images[self.frame]
+        def update(self, dtime):
+            self.life += dtime
+            if self.life > self.total_life:
+                self.kill()
+            else:
+                self.frame = int(self.life/self.interval)
+                self.image = self.images[self.frame]
+
+
     class MinigameMusicgame(renpy.Displayable):
         def __init__(self):
             super(MinigameMusicgame, self).__init__()
@@ -105,6 +125,10 @@ init 2 python:
             self.playing = False
             self.FPS = 50
             self.interval = 1.0/self.FPS
+            self.fade_group = Groups()
+
+            self.song = './audio/music_game/JayZhou.mp3'
+            self.sound = './audio/music_game/Shoot.mp3'
 
         def render(self, width, heigh, st, at):
             screen = renpy.Render(width, heigh)
@@ -112,10 +136,11 @@ init 2 python:
                 self.intro(screen)
             elif self.status == Status.snew:
                 self.new()
+                self.stop(screen)
             elif self.status == Status.stop:
                 self.stop(screen)
             elif self.status == Status.main:
-                self.main(screen, st)
+                self.main(screen, st, st - self.oldtime)
             elif self.status == Status.gameover:
                 self.gameover(screen)
 
@@ -139,6 +164,7 @@ init 2 python:
             elif self.status == Status.main:
                 if ev.type == pygame.KEYDOWN:
                     if ev.key == pygame.K_a:
+                        renpy.music.play(self.sound, channel='sound')
                         if self.realfirst:
                             if 576 + 30 >= self.realfirst[0].PostY() >= 576 - 30:
                                 self.score += 100
@@ -146,9 +172,11 @@ init 2 python:
                             else:
                                 self.score += 30
                                 self.comble = 0
+                            self.fade_group.add(NoteFade(self.realfirst[0].PostX(),self.realfirst[0].PostY(),image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90))
                             self.realfirst.remove(self.realfirst[0])
                             self.realblocks = self.realfirst + self.realsecond + self.realthird + self.realfourth
                     if ev.key == pygame.K_d:
+                        renpy.music.play(self.sound, channel='sound')
                         if self.realsecond:
                             if 576 + 30 >= self.realsecond[0].PostY() >= 576 - 30:
                                 self.score += 100
@@ -156,9 +184,11 @@ init 2 python:
                             else:
                                 self.score += 30
                                 self.comble = 0
+                            self.fade_group.add(NoteFade(self.realsecond[0].PostX(),self.realsecond[0].PostY(),image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90))
                             self.realsecond.remove(self.realsecond[0])
                             self.realblocks = self.realfirst + self.realsecond + self.realthird + self.realfourth
                     if ev.key == pygame.K_k:
+                        renpy.music.play(self.sound, channel='sound')
                         if self.realthird:
                             if 576 + 30 >= self.realthird[0].PostY() >= 576 - 30:
                                 self.score += 100
@@ -166,9 +196,11 @@ init 2 python:
                             else:
                                 self.score += 30
                                 self.comble = 0
+                            self.fade_group.add(NoteFade(self.realthird[0].PostX(),self.realthird[0].PostY(),image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90))
                             self.realthird.remove(self.realthird[0])
                             self.realblocks = self.realfirst + self.realsecond + self.realthird + self.realfourth
                     if ev.key == pygame.K_l:
+                        renpy.music.play(self.sound, channel='sound')
                         if self.realfourth:
                             if 576 + 30 >= self.realfourth[0].PostY() >= 576 - 30:
                                 self.score += 100
@@ -176,6 +208,7 @@ init 2 python:
                             else:
                                 self.score += 30
                                 self.comble = 0
+                            self.fade_group.add(NoteFade(self.realfourth[0].PostX(),self.realfourth[0].PostY(),image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90))
                             self.realfourth.remove(self.realfourth[0])
                             self.realblocks = self.realfirst + self.realsecond + self.realthird + self.realfourth
             elif self.status == Status.gameover:
@@ -189,7 +222,7 @@ init 2 python:
         def draw_text(self, text, colour, x, y, fontsize, screen):
             # font = pygame.font.Font("浪漫雅圆.ttf", fontsize)
             # img = font.render(text, True, colour)
-            img = Text(text)
+            img = Text(text, size=fontsize,font="浪漫雅圆.ttf",color=colour)
             screen.place(img, x, y)
         def new(self):
             # self.playing = True
@@ -319,9 +352,6 @@ init 2 python:
             screen.blit(self.play_button.image, self.play_button.rect.topleft)
 
         def stop(self, screen):
-            if self.stop_time >= 154:
-                # print(self.status)
-                self.status = Status.main
             if 50 >= self.stop_time > 0:
                 screen.blit(self.background, (0, 0))
                 screen.blit(self.stop3, (250, 150))
@@ -332,16 +362,19 @@ init 2 python:
                 screen.blit(self.background, (0, 0))
                 screen.blit(self.stop1, (250, 150))
             self.stop_time += 1
+            if self.stop_time >= 150:
+                # print(self.status)
+                self.status = Status.main
 
-        def main(self, screen, st):
+        def main(self, screen, st, dtime):
             # self.a = self.clock.get_time()/20
             if not self.playing:
                 if renpy.music.is_playing():
                     renpy.music.stop()
-                renpy.play('./audio/JayZhou.mp3', channel='music')
+                renpy.play(self.song, channel='music')
                 self.playing = True
 
-            self.a = 100.0
+            self.a = 1.0
             self.thetime += self.a
             # print(self.thetime)
             # 判断歌曲是否结束
@@ -351,6 +384,8 @@ init 2 python:
             
             self.create_blocks()
             self.drop(screen)
+            self.fade_group.update(dtime)
+            self.fade_group.draw(screen)
             self.draw_text("Score:" + str(self.score), WHITE, 1050, 30, 40, screen)
             if self.comble >= 3:
                 self.draw_text("Comble " + str(self.comble), BLUE, 1050 / 2, 30, 40, screen)
@@ -360,8 +395,8 @@ init 2 python:
             if self.playing == True:
                 self.playing = False
                 # text = self.font.render("Your Score is:"+str(self.score), True, BLACK)
-                self.score_text = Text("Your Score is:"+str(self.score))
-                self.restart_button = Button(10, self.SCREEN_HEIGHT - 60, 120, 50, WHITE, BLACK, "END", 30)
+                self.score_text = Text("Your Score is:"+str(self.score),color=BLACK,font='浪漫雅圆.ttf')
+                self.restart_button = Button(10, self.SCREEN_HEIGHT - 60, 120, 50, WHITE, BLACK, "END", 40)
                 # text_rect = text.get_rect(center=(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2-40))
             
             screen.blit(self.background1, (0, 0))

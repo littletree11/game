@@ -295,6 +295,8 @@ screen navigation():
         if main_menu:
 
             textbutton _("开始游戏") action Start()
+            if persistent.clear:
+                textbutton _("里") action Start('里')
 
         else:
 

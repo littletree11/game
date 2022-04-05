@@ -79,6 +79,7 @@ label part8:
     #避免重复，之后的失误都直接重启
     #─────────────────
     hide 小东
+    scene gray with fade
     $ quick_menu = False
 
     call screen dino

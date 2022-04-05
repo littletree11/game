@@ -23,8 +23,8 @@ define persistent.clear = False
 
 label start:
 
-    if persistent.clear:
-        jump 里
+    # if persistent.clear:
+    #     jump 里
 
     # 显示一个背景。此处默认显示占位图，但您也可以在图片目录添加一个文件
     # （命名为“bg room.png”或“bg room.jpg”）来显示。
