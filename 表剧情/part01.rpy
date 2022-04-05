@@ -17,11 +17,14 @@ define 花丸 = Character("花丸")
 define ののの = Character("ののの")
 define 鹿乃 = Character("鹿乃")
 
+define persistent.clear = False
 
 # 游戏在此开始。
 
 label start:
 
+    if persistent.clear:
+        jump 里
 
     # 显示一个背景。此处默认显示占位图，但您也可以在图片目录添加一个文件
     # （命名为“bg room.png”或“bg room.jpg”）来显示。

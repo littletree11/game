@@ -3,10 +3,14 @@ import pygame
 from pygame.locals import *
 import sys,os,random
 from random import randint
+import copy
 
 MAZE_WITHDETH = 21
 MAZE_HEIGHT = 21
 BLOCK_SIZE = 30
+VIEW_WIDTH = 640
+VIEW_HEIGHT = 640
+PLAYER_SIZE = 30
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -31,11 +35,15 @@ class Maze(pygame.sprite.Sprite):
         self.cell_size = cell_size
         self.i_withdeth = self.t_cell_w * cell_size
         self.i_height = self.t_cell_h * cell_size
-        self.end_point = (self.cell_size*(self.t_cell_w - 0.5), self.cell_size*(self.t_cell_h - 0.5))
+        # self.end_point = (self.cell_size*(self.t_cell_w - 0.5), self.cell_size*(self.t_cell_h - 0.5))
+        self.end_point = self._get_end()
+        # print(self.end_point)
         self.colide_cell = [[0,0],[0,0]]
 
         self.map = self.wall2map(self.maze_generate(self.maze_withdeth, self.maze_height))
         self.image = self.show_map()
+        self.rect = self.image.get_rect()
+        
 
     # Randomized Prim's algorithm
     def maze_generate(self, maze_withdeth, maze_height):
@@ -129,14 +137,32 @@ class Maze(pygame.sprite.Sprite):
 
     def update(self):
         pass
+    
+    def get_init_pos(self):
+        return (self.i_withdeth/2+self.cell_size, self.i_height/2+self.cell_size)
+
+    def _get_end(self):
+        # 只生成边缘终点
+        edge = randint(0,3) # 选择一条边，0，1，2，3 -> left,top,right,bottom
+        if edge == 0:
+            pos = [0, randint(0, self.maze_height-1)]
+        if edge == 1:
+            pos = [randint(0, self.maze_withdeth-1), 0]
+        if edge == 2:
+            pos = [self.maze_withdeth-1, randint(0, self.maze_height-1)]
+        else:
+            pos = [randint(0, self.maze_withdeth-1), self.maze_height - 1]
+        
+        return [(2*pos[0]+0.5)*self.cell_size, (2*pos[1]+0.5)*self.cell_size]
+
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,size, speed, end_point:tuple[int, int]):
+    def __init__(self,size, speed, init_pos, end_point:tuple[int, int]):
         self.size = size
         self.image = pygame.Surface((size,size))
         self.image.fill(GRAY)
         self.rect = self.image.get_rect()
-        self.rect.topleft = (0,0)
+        self.rect.center = init_pos
         self.speed = speed
         self.direction = Direction.NONE
         self.old_rect = [0,0]
@@ -177,12 +203,17 @@ class Player(pygame.sprite.Sprite):
     def is_end(self):
         return self.end_flag
 
-m = Maze(12,12,30)
-p = Player(10, 5, m.end_point)
+m = Maze(12,12,60)
+# print(m.end_point)
+# print(m.i_withdeth, m.i_height)
+p = Player(PLAYER_SIZE, 5, m.get_init_pos(),  m.end_point)
+# print(p.end_point)
 
 
 pygame.init()
-screen = pygame.display.set_mode((m.i_withdeth,m.i_height))
+# screen = pygame.display.set_mode((m.i_withdeth,m.i_height))
+# player always stay the center
+screen = pygame.display.set_mode((VIEW_WIDTH, VIEW_HEIGHT))
 clock = pygame.time.Clock()
 # background = pygame.Surface((800,600)).convert_alpha()
 # background.fill(GRAY)
@@ -216,7 +247,28 @@ while True:
         sys.exit()
     # p.set_direction(Direction.DOWN)
     
-    screen.blit(m.image, (0,0))
-    screen.blit(p.image, p.rect)
+    # screen.blit(m.image, (0,0))
+    # screen.blit(p.image, p.rect)
+    # player stay the center always
+    
+    sub = pygame.Rect(0,0, VIEW_WIDTH, VIEW_HEIGHT)
+    sub.center = copy.deepcopy(p.rect.center)
+    player_pos= (0.5*(VIEW_WIDTH - PLAYER_SIZE),0.5*(VIEW_HEIGHT - PLAYER_SIZE))
+    # 防止sub截取超过m.image范围的图像,player的位置需要更新，而不是保持在正中间
+    if sub.bottom > m.rect.bottom:
+        sub.bottom = m.rect.bottom
+        player_pos = (p.rect.left - sub.left, p.rect.top - sub.top)
+    if sub.right > m.rect.right:
+        sub.right = m.rect.right
+        player_pos = (p.rect.left - sub.left, p.rect.top - sub.top)
+    if sub.left < m.rect.left:
+        sub.left = m.rect.left
+        player_pos = (p.rect.left - sub.left, p.rect.top - sub.top)
+    if sub.top < m.rect.top:
+        sub.top = m.rect.top
+        player_pos = (p.rect.left - sub.left, p.rect.top - sub.top)
+
+    screen.blit(m.image.subsurface(sub), (0,0))
+    screen.blit(p.image, player_pos)
     pygame.display.update()
     clock.tick(FPS)

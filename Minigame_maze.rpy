@@ -1,14 +1,14 @@
 init 1 python:
-
-    # from enum import Enum,auto
-    # import pygame
-    # from pygame.locals import *
+    import copy
     import random
     from random import randint
 
-    MAZE_WITHDETH = 10
-    MAZE_HEIGHT = 10
-    BLOCK_SIZE = 30
+    MAZE_WITHDETH = 14
+    MAZE_HEIGHT = 14
+    BLOCK_SIZE = 60
+    VIEW_WIDTH = 640
+    VIEW_HEIGHT = 640
+    PLAYER_SIZE = 30
 
     BLACK = (0,0,0)
     WHITE = (255,255,255)
@@ -32,12 +32,14 @@ init 1 python:
             self.cell_size = cell_size
             self.i_withdeth = self.t_cell_w * cell_size
             self.i_height = self.t_cell_h * cell_size
-            self.end_point = (self.cell_size*(self.t_cell_w - 0.5), self.cell_size*(self.t_cell_h - 0.5))
+            # self.end_point = (self.cell_size*(self.t_cell_w - 0.5), self.cell_size*(self.t_cell_h - 0.5))
+            self.end_point = self._get_end()
             self.colide_cell = [[0,0],[0,0]]
 
-            self.flag_img = pygame.image.load(renpy.file('./images/flag.png')).convert_alpha()
+            # self.flag_img = pygame.image.load(renpy.file('./images/flag.png')).convert_alpha()
             self.map = self.wall2map(self.maze_generate(self.maze_withdeth, self.maze_height))
             self.image = self.show_map()
+            self.rect = pygame.Rect(0,0,self.i_withdeth, self.i_height)
 
         # Randomized Prim's algorithm
         def maze_generate(self, maze_withdeth, maze_height):
@@ -132,13 +134,30 @@ init 1 python:
             if x < self.t_cell_w and y < self.t_cell_h:
                 return self.map[y][x]
 
+        def get_init_pos(self):
+            return (self.i_withdeth/2+self.cell_size, self.i_height/2+self.cell_size)
+
+        def _get_end(self):
+            # 只生成边缘终点
+            edge = randint(0,3) # 选择一条边，0，1，2，3 -> left,top,right,bottom
+            if edge == 0:
+                pos = [0, randint(0, self.maze_height-1)]
+            if edge == 1:
+                pos = [randint(0, self.maze_withdeth-1), 0]
+            if edge == 2:
+                pos = [self.maze_withdeth-1, randint(0, self.maze_height-1)]
+            else:
+                pos = [randint(0, self.maze_withdeth-1), self.maze_height - 1]
+            
+            return [(2*pos[0]+0.5)*self.cell_size, (2*pos[1]+0.5)*self.cell_size]
+
     class Player(pygame.sprite.Sprite):
-        def __init__(self,size, speed, end_point):
+        def __init__(self,size, speed, init_pos, end_point):
             self.size = size
             self.image = renpy.Render(size, size)
             self.image.canvas().rect(GRAY, (0,0, size, size))
             self.rect = pygame.Rect(0,0,size, size)
-            self.rect.topleft = (0,0)
+            self.rect.center = init_pos
             self.speed = speed
             self.direction = Direction.NONE
             self.old_rect = [0,0]
@@ -183,22 +202,39 @@ init 1 python:
         def __init__(self, **properties):
             super(MinigameMaze, self).__init__(**properties)
             self.m = Maze(MAZE_WITHDETH,MAZE_HEIGHT,BLOCK_SIZE)
-            self.p = Player(10, 5, self.m.end_point)
+            self.p = Player(PLAYER_SIZE, 5, self.m.get_init_pos(), self.m.end_point)
             self.finish = False
 
         def render(self, width, heigh, st, at):
             score = renpy.render(Text('Score:'+str(self.p.rect.topleft)), 100,300,0,0)
             # screen = renpy.Render(width, heigh)
-            screen = renpy.Render(self.m.i_withdeth, self.m.i_height)
+            screen = renpy.Render(VIEW_WIDTH, VIEW_HEIGHT)
             self.p.update()
             if self.m.colide(self.p.rect):
                 self.p.reset_pos(self.m.colide_cell)
             if self.p.is_end():
                 self.finish = True
+
+            sub = pygame.Rect(0,0, VIEW_WIDTH, VIEW_HEIGHT)
+            sub.center = copy.deepcopy(self.p.rect.center)
+            player_pos= (0.5*(VIEW_WIDTH - PLAYER_SIZE),0.5*(VIEW_HEIGHT - PLAYER_SIZE))
+            # 防止sub截取超过m.image范围的图像,player的位置需要更新，而不是保持在正中间
+            if sub.bottom > self.m.rect.bottom:
+                sub.bottom = self.m.rect.bottom
+                player_pos = (self.p.rect.left - sub.left, self.p.rect.top - sub.top)
+            if sub.right > self.m.rect.right:
+                sub.right = self.m.rect.right
+                player_pos = (self.p.rect.left - sub.left, self.p.rect.top - sub.top)
+            if sub.left < self.m.rect.left:
+                sub.left = self.m.rect.left
+                player_pos = (self.p.rect.left - sub.left, self.p.rect.top - sub.top)
+            if sub.top < self.m.rect.top:
+                sub.top = self.m.rect.top
+                player_pos = (self.p.rect.left - sub.left, self.p.rect.top - sub.top)
             
-            screen.blit(self.m.image, (0,0))
+            screen.blit(self.m.image.subsurface(sub), (0,0))
             screen.blit(score, (1000,100))
-            screen.blit(self.p.image, self.p.rect.topleft)
+            screen.blit(self.p.image, player_pos)
 
             renpy.redraw(self, 0)
             return screen

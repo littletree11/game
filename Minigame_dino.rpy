@@ -64,7 +64,7 @@ init 0 python:
                     self.jumping = False
             if self.index > self.image_number - 1:
                 self.index = 0
-            if self.frame > 9:
+            if self.frame > 5:
                 self.image = self.images[self.index]
                 self.index += 1
                 self.frame = 0
@@ -87,7 +87,7 @@ init 0 python:
         
         def update(self):
             self.rect.left -= self.speed
-            if self.rect.left < -20:
+            if self.rect.right < -20:
                 self.kill()
 
     class Cloud(DObject):
@@ -97,10 +97,10 @@ init 0 python:
             self.base = base - self.image_height - 100
             self.image = self.images[random.randint(0,self.image_number-1)]
             self.rect = self.image.get_rect()
-            self.rect.topleft = [800, self.base]
+            self.rect.topleft = [1280, self.base]
         def update(self):
             self.rect.left -= self.speed
-            if self.rect.left < -20:
+            if self.rect.right < -20:
                 self.kill()
 
 
@@ -136,7 +136,7 @@ init 0 python:
                 if random.randint(1, 60) < 3:
                     self.tree_group.add(Tree(BASE,image_name='images/kohi_tree.png',image_number=2,image_width=43,image_height=90))
                     self.last_tree = 0
-            if len(self.cloud_group.sprites()) < 1:
+            if len(self.cloud_group.sprites()) < 3:
                 self.cloud_group.add(Cloud(BASE, image_name='images/kohi_cloud.png',image_number=2,image_width=90,image_height=90))
             # 更新位置
             if not pygame.sprite.spritecollide(self.di, self.tree_group, False):

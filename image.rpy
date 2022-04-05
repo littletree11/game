@@ -2,10 +2,15 @@ image black = "#000"
 image white = "#fff"
 image green = "#6ee2b4"
 
+
+# part02 密室寻找物品 
 screen find:
-    imagebutton auto "images/ticket_%s.png" action Jump('ticket') xalign 0.7 yalign 0.7
-    imagebutton auto "images/bear_%s.png" action Jump('bear') xalign 0.4 yalign 0.8
-    imagebutton auto "images/ball_%s.png" action Jump('ball') xalign 0.7 yalign 0.2
+    if not flag_ticket:
+        imagebutton auto "images/ticket_%s.png" action Jump('ticket') xalign 0.7 yalign 0.7
+    if not flag_bear:
+        imagebutton auto "images/bear_%s.png" action Jump('bear') xalign 0.4 yalign 0.8
+    if not flag_ball:
+        imagebutton auto "images/ball_%s.png" action Jump('ball') xalign 0.7 yalign 0.2
 
 
 label ticket:

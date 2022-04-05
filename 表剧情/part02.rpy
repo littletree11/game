@@ -123,5 +123,5 @@ label find:
         小东 "好了，应该是这样吧？"
         小东 "棒球，电影票，游戏截图\n我按顺序放下对应的三样物品后，门传来了解锁的声音"
         jump part3
-
+    
     call screen find with fade
