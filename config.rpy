@@ -1,1 +1,1 @@
-define config.rollback_enabled = False
+define config.rollback_enabled = True

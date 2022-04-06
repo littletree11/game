@@ -107,7 +107,7 @@ screen say(who, what):
 
         text what id "what"
     
-    key "mousedown_4" action ShowMenu('history')
+    # key "mousedown_4" action ShowMenu('history')
 
 
     ## 如果有对话框头像，会将其显示在文本之上。请不要在手机界面下显示这个，因为

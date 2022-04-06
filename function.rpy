@@ -81,3 +81,4 @@ init:
         linear 1.0 xalign 0.2
 
     define fadewhite = Fade(3.0,  0.0,  0.5,  color =  "#000")
+    define flash = Fade(0.1, 0.0, 0.5, color="#fff")

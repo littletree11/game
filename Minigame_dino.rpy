@@ -11,7 +11,7 @@ init 0 python:
     WHITE = (255, 255, 255)
     dino_screen_width = 800
     dino_screen_height = 600
-    BASE = dino_screen_width * 0.75
+    BASE = dino_screen_height * 0.75
     class Groups(pygame.sprite.Group):
         def __init__(self, **args):
             super(Groups, self).__init__()
@@ -125,7 +125,7 @@ init 0 python:
             # self.base_line = Solid(WHITE, xsize = 1280, ysize=10)
             # self.base_line = pygame.Surface((1280,10))
             self.base_line = renpy.Render(self.screen_width,10)
-            self.base_line.canvas().rect(WHITE, (0,0,self.screen_width,10))
+            self.base_line.canvas().rect(GRAY, (0,0,self.screen_width,10))
             self.di = Dino(BASE,image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90)
             self.tree_group = Groups()
             self.tree_group.add(Tree(BASE,image_name='images/kohi_tree.png',image_number=2,image_width=43,image_height=90))
@@ -145,6 +145,7 @@ init 0 python:
                 dtime = st - self.oldst
 
             screen = renpy.Render(self.screen_width, self.screen_height)
+            screen.canvas().rect(WHITE, (0,0,self.screen_width,self.screen_height))
             if self.running:
                 if len(self.tree_group.sprites()) <= 2 and self.last_tree > 77:
                     if random.randint(1, 60) < 3:

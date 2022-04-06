@@ -1,0 +1,18 @@
+# 定义了音频空间的变量
+# 使用1.MP3作为路径的为占位符，现在缺少音频文件，后续替换之后删除
+define audio.hanu = './audio/BGM/春のキッチン.mp3'
+define audio.sei = './audio/BGM/静寂に煌めく.mp3'
+define audio.tisa = './audio/BGM/小さなお届け屋さん.mp3'
+define audio.tan = './audio/BGM/1.mp3'
+define audio.mie = './audio/BGM/1.mp3'
+define audio.aya = './audio/BGM/怪しい屋敷を探索する的なBGM.mp3'
+define audio.hare = './audio/BGM/1.mp3'
+define audio.ie = './audio/BGM/家犬はほのぼの.mp3'
+define audio.fusi = './audio/BGM/不思議の森.mp3'
+define audio.maho = './audio/BGM/1.mp3'
+define audio.charm = './audio/BGM/Charm_Room.mp3'
+define audio.etizo = './audio/BGM/Etizolam.mp3'
+define audio.the = './audio/BGM/1.mp3'
+define audio.puzzle = './audio/BGM/1.mp3'
+define audio.happy = './audio/BGM/Happy_And_Joy.mp3'
+define audio.non = './audio/BGM/のんきな日常.mp3'
