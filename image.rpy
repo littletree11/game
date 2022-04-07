@@ -3,6 +3,17 @@ image white = "#fff"
 image green = "#6ee2b4"
 image gray = "#777676"
 
+python:
+    def get_time():
+        return Text(str(time.time()), color=BLACK, fontsize=30)
+
+image time:
+    Text(str(time.time()), color=BLACK, fontsize=30)
+    pause 1.0
+    repeat
+
+transform show_time:
+    pass
 
 # part02 密室寻找物品 
 screen find:

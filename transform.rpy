@@ -80,5 +80,17 @@ init:
         time delay_time
         linear 1.0 xalign 0.2
 
-    define fadewhite = Fade(3.0,  0.0,  0.5,  color =  "#000")
-    define flash = Fade(0.1, 0.0, 0.5, color="#fff")
+    # 下列几种变换只是实验用途
+    # 色彩渐变
+    transform gradient:
+        shader "example.gradient"
+        u_gradient_left (1.0, 0.0, 0.0, 1.0)
+        u_gradient_right (0.0, 0.0, 1.0, 1.0)
+    # 改变亮度
+    transform brightness(bright = -0.7):
+        matrixcolor BrightnessMatrix(bright)
+    # 亮度闪烁r次
+    transform twinkle(speed=0.2, r=3):
+        matrixcolor BrightnessMatrix(-0.2)
+        linear speed matrixcolor BrightnessMatrix(0.2)
+        repeat r

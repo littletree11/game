@@ -24,13 +24,13 @@ init 2 python:
             # self.rect.x = self.x
             # self.rect.y = self.y
             # self.text = self.font.render(self.content, True, self.fg)
-            self.text = Text(self.content, size=fontsize, color=self.fg, font="浪漫雅圆.ttf")
+            self.text = Text(self.content, size=fontsize, color=self.fg, font="浪漫雅圆.ttf", xalign=0.5, yalign=0.5)
             # self.text_rect = self.text.get_rect(center=(self.width / 2, self.height / 2))
             # self.text_rect = self.text.canvas().get_surface()
             self.text_rect = pygame.Rect(0,0,self.width, self.height)
             self.text_rect.center = (self.width / 2, self.height / 2)
             # self.image.place(self.text, self.text_rect.left, self.text_rect.top)
-            self.image.place(self.text, 15, 0)
+            self.image.place(self.text, 0, 0)
 
         def is_pressed(self, pos, pressed):
             if self.able:
@@ -127,8 +127,8 @@ init 2 python:
             self.interval = 1.0/self.FPS
             self.fade_group = Groups()
 
-            self.song = './audio/music_game/JayZhou.mp3'
-            self.sound = './audio/music_game/Shoot.mp3'
+            self.song = 'audio/music_game/JayZhou.mp3'
+            self.sound = 'audio/music_game/Shoot.mp3'
 
         def render(self, width, heigh, st, at):
             screen = renpy.Render(width, heigh)
@@ -222,7 +222,7 @@ init 2 python:
         def draw_text(self, text, colour, x, y, fontsize, screen):
             # font = pygame.font.Font("浪漫雅圆.ttf", fontsize)
             # img = font.render(text, True, colour)
-            img = Text(text, size=fontsize,font="浪漫雅圆.ttf",color=colour)
+            img = Text(text, size=fontsize,font="浪漫雅圆.ttf",color=colour, xalign=0.5)
             screen.place(img, x, y)
         def new(self):
             # self.playing = True
@@ -374,7 +374,7 @@ init 2 python:
                 renpy.play(self.song, channel='music')
                 self.playing = True
 
-            self.a = 1.0
+            self.a = 100.0
             self.thetime += self.a
             # print(self.thetime)
             # 判断歌曲是否结束

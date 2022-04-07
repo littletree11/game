@@ -174,8 +174,10 @@ init 0 python:
             screen.blit(self.di.image, self.di.rect.topleft)
             
             if not self.running:
-                start = renpy.render(Text('PRESS SPACE TO START'), 400,300,0,0)
-                screen.blit(start, (400,300))
+                start = renpy.Render(self.screen_width, 100)
+                # start = renpy.render(Text('PRESS SPACE TO START', xalign=0.5, color=BLACK), self.screen_width,300,0,0)
+                start.place(Text('PRESS SPACE TO START', xalign=0.5, color=BLACK), 0,0)
+                screen.blit(start, (0,300))
             
 
             renpy.redraw(self, 0)

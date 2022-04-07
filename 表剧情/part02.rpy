@@ -1,5 +1,5 @@
 label part2:
-    scene 房间（暗） with fade:
+    scene 房间（暗） with circleirisin:
         zoom 0.4
     play music sei
     "醒过来时，发现身处一个漆黑的房间\n意識が戻った時、もう真っ暗の部屋にいる。"
