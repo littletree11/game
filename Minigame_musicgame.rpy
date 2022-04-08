@@ -10,7 +10,6 @@ init 2 python:
     class Button:
         def __init__(self, x, y, width, height, fg, bg, content, fontsize):
             self.able = True
-            # self.font = pygame.font.Font("浪漫雅圆.ttf", fontsize)
             self.content = content
             self.x = x
             self.y = y
@@ -21,15 +20,9 @@ init 2 python:
             self.image = renpy.Render(self.width, self.height)
             self.image.canvas().rect(self.bg, (0,0, self.width, self.height))
             self.rect = pygame.Rect(x,y,self.width, self.height)
-            # self.rect.x = self.x
-            # self.rect.y = self.y
-            # self.text = self.font.render(self.content, True, self.fg)
             self.text = Text(self.content, size=fontsize, color=self.fg, font="浪漫雅圆.ttf", xalign=0.5, yalign=0.5)
-            # self.text_rect = self.text.get_rect(center=(self.width / 2, self.height / 2))
-            # self.text_rect = self.text.canvas().get_surface()
             self.text_rect = pygame.Rect(0,0,self.width, self.height)
             self.text_rect.center = (self.width / 2, self.height / 2)
-            # self.image.place(self.text, self.text_rect.left, self.text_rect.top)
             self.image.place(self.text, 0, 0)
 
         def is_pressed(self, pos, pressed):
@@ -148,8 +141,6 @@ init 2 python:
                 gap = 2*self.interval - (st - self.oldtime)
             else:
                 gap = self.interval
-            # print(gap)
-            # print("interval: " + str(self.interval))
             renpy.redraw(self, gap)
             self.oldtime = st
             return screen
@@ -172,7 +163,7 @@ init 2 python:
                             else:
                                 self.score += 30
                                 self.comble = 0
-                            self.fade_group.add(NoteFade(self.realfirst[0].PostX(),self.realfirst[0].PostY(),image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90))
+                            self.fade_group.add(NoteFade(self.realfirst[0].PostX(),self.realfirst[0].PostY(),image_name='images/kohi_kohi.png', image_number=5))
                             self.realfirst.remove(self.realfirst[0])
                             self.realblocks = self.realfirst + self.realsecond + self.realthird + self.realfourth
                     if ev.key == pygame.K_d:
@@ -184,7 +175,7 @@ init 2 python:
                             else:
                                 self.score += 30
                                 self.comble = 0
-                            self.fade_group.add(NoteFade(self.realsecond[0].PostX(),self.realsecond[0].PostY(),image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90))
+                            self.fade_group.add(NoteFade(self.realsecond[0].PostX(),self.realsecond[0].PostY(),image_name='images/kohi_kohi.png', image_number=5))
                             self.realsecond.remove(self.realsecond[0])
                             self.realblocks = self.realfirst + self.realsecond + self.realthird + self.realfourth
                     if ev.key == pygame.K_k:
@@ -196,7 +187,7 @@ init 2 python:
                             else:
                                 self.score += 30
                                 self.comble = 0
-                            self.fade_group.add(NoteFade(self.realthird[0].PostX(),self.realthird[0].PostY(),image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90))
+                            self.fade_group.add(NoteFade(self.realthird[0].PostX(),self.realthird[0].PostY(),image_name='images/kohi_kohi.png', image_number=5))
                             self.realthird.remove(self.realthird[0])
                             self.realblocks = self.realfirst + self.realsecond + self.realthird + self.realfourth
                     if ev.key == pygame.K_l:
@@ -208,7 +199,7 @@ init 2 python:
                             else:
                                 self.score += 30
                                 self.comble = 0
-                            self.fade_group.add(NoteFade(self.realfourth[0].PostX(),self.realfourth[0].PostY(),image_name='images/kohi_kohi.png', image_number=5,image_width=58,image_height=90))
+                            self.fade_group.add(NoteFade(self.realfourth[0].PostX(),self.realfourth[0].PostY(),image_name='images/kohi_kohi.png', image_number=5))
                             self.realfourth.remove(self.realfourth[0])
                             self.realblocks = self.realfirst + self.realsecond + self.realthird + self.realfourth
             elif self.status == Status.gameover:
@@ -216,16 +207,12 @@ init 2 python:
                     mouse_pos = (x,y)
                     mouse_pressed = pygame.mouse.get_pressed()
                     if self.restart_button.is_pressed(mouse_pos, mouse_pressed):
-                        # self.status = Status.snew
                         return self.score
 
         def draw_text(self, text, colour, x, y, fontsize, screen):
-            # font = pygame.font.Font("浪漫雅圆.ttf", fontsize)
-            # img = font.render(text, True, colour)
             img = Text(text, size=fontsize,font="浪漫雅圆.ttf",color=colour, xalign=0.5)
             screen.place(img, x, y)
         def new(self):
-            # self.playing = True
             self.thetime=0
             self.realblocks.clear()
             self.realfirst.clear()
@@ -306,9 +293,6 @@ init 2 python:
             [8165, 1, 0, 0, 0], [8183, 0, 1, 0, 0], [8202, 0, 1, 0, 0], [10000, 0, 0, 0, 0]]
             self.score=0
             self.comble=0
-            # pygame.mixer.music.play()
-            # self.stop()
-            # print(self.status)
             self.status= Status.stop
 
         def create_blocks(self):
@@ -363,11 +347,9 @@ init 2 python:
                 screen.blit(self.stop1, (250, 150))
             self.stop_time += 1
             if self.stop_time >= 150:
-                # print(self.status)
                 self.status = Status.main
 
         def main(self, screen, st, dtime):
-            # self.a = self.clock.get_time()/20
             if not self.playing:
                 if renpy.music.is_playing():
                     renpy.music.stop()
@@ -376,7 +358,6 @@ init 2 python:
 
             self.a = 100.0
             self.thetime += self.a
-            # print(self.thetime)
             # 判断歌曲是否结束
             if self.thetime >= 8410:
                 renpy.music.stop()
@@ -394,15 +375,12 @@ init 2 python:
             # 生成分数
             if self.playing == True:
                 self.playing = False
-                # text = self.font.render("Your Score is:"+str(self.score), True, BLACK)
                 self.score_text = Text("Your Score is:"+str(self.score),color=BLACK,font='浪漫雅圆.ttf')
                 self.restart_button = Button(10, self.SCREEN_HEIGHT - 60, 120, 50, WHITE, BLACK, "END", 40)
-                # text_rect = text.get_rect(center=(self.SCREEN_WIDTH / 2, self.SCREEN_HEIGHT / 2-40))
             
             screen.blit(self.background1, (0, 0))
             screen.blit(self.restart_button.image, self.restart_button.rect.topleft)
             screen.place(self.score_text, self.SCREEN_WIDTH / 2, (self.SCREEN_HEIGHT / 2)-40)
-            # print(self.restart_button.rect)
             
 
         def get_file(self, path):

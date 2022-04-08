@@ -1,6 +1,19 @@
 # 导入模块,应该将所有模块和常量放在此处统一导入，避免出现导入问题和命名问题
 init -1 python:
     import time
+    import pygame
+    # from pygame.locals import *
+    import sys,random,math,os,platform
+    import copy
+    from random import randint
+
+    # 小游戏中会用到的颜色
+    BLACK = (0,0,0)
+    WHITE = (255,255,255)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (78, 213, 254)
+    GRAY = (122,122,122)
     
     # 自定义着色器
     renpy.register_shader("example.gradient", variables="""

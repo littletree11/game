@@ -1,8 +1,4 @@
 init 1 python:
-    import copy
-    import random
-    from random import randint
-
     MAZE_WITHDETH = 14
     MAZE_HEIGHT = 14
     BLOCK_SIZE = 60
@@ -10,18 +6,13 @@ init 1 python:
     VIEW_HEIGHT = 640
     PLAYER_SIZE = 30
 
-    BLACK = (0,0,0)
-    WHITE = (255,255,255)
-    GRAY = (122,122,122)
-    RED = (255, 0 , 0)
-
     # class Direction(Enum):
     class Direction(object):
-        UP = 1
-        DOWN = 2
-        RIGHT = 3
-        LEFT = 4
-        NONE = 0
+        UP = 0
+        DOWN = 1
+        RIGHT = 2
+        LEFT = 3
+        NONE = 99
 
     class Maze(pygame.sprite.Sprite):
         def __init__(self, maze_withdeth, maze_height, cell_size):
@@ -139,12 +130,12 @@ init 1 python:
 
         def _get_end(self):
             # 只生成边缘终点
-            edge = randint(0,3) # 选择一条边，0，1，2，3 -> left,top,right,bottom
+            edge = renpy.random.randint(0,3) # 选择一条边，0，1，2，3 -> left,top,right,bottom
             if edge == 0:
                 pos = [0, randint(0, self.maze_height-1)]
-            if edge == 1:
+            elif edge == 1:
                 pos = [randint(0, self.maze_withdeth-1), 0]
-            if edge == 2:
+            elif edge == 2:
                 pos = [self.maze_withdeth-1, randint(0, self.maze_height-1)]
             else:
                 pos = [randint(0, self.maze_withdeth-1), self.maze_height - 1]
@@ -159,29 +150,39 @@ init 1 python:
             self.rect = pygame.Rect(0,0,size, size)
             self.rect.center = init_pos
             self.speed = speed
-            self.direction = Direction.NONE
+            # self.direction = Direction.NONE
+            self.direction = [False,False,False,False]
             self.old_rect = [0,0]
             self.end_point = end_point
             self.end_flag = False
 
         def update(self):
-            if self.direction == Direction.UP:
+            # if self.direction == Direction.UP:
+            if self.direction[Direction.UP]:
                 self.old_rect = self.rect.topleft
                 self.rect.top -= self.speed
-            elif self.direction == Direction.RIGHT:
+            # elif self.direction == Direction.RIGHT:
+            elif self.direction[Direction.RIGHT]:
                 self.old_rect = self.rect.topleft
                 self.rect.right += self.speed
-            elif self.direction == Direction.DOWN:
+            # elif self.direction == Direction.DOWN:
+            elif self.direction[Direction.DOWN]:
                 self.old_rect = self.rect.topleft
                 self.rect.bottom += self.speed
-            elif self.direction == Direction.LEFT:
+            # elif self.direction == Direction.LEFT:
+            elif self.direction[Direction.LEFT]:
                 self.old_rect = self.rect.topleft
                 self.rect.left -= self.speed
-            if self.end_point[0] - self.rect.left < 5 and self.end_point[1] - self.rect.top < 5:
+            if 0<self.end_point[0] - self.rect.left < 5 and 0<self.end_point[1] - self.rect.top < 5:
+                # print(self.end_point[0] - self.rect.left, self.end_point[1] - self.rect.top)
                 self.end_flag = True
         
-        def set_direction(self, direction = Direction.NONE):
-            self.direction = direction
+        def set_direction(self, direction):
+            # self.direction = direction
+            self.direction[direction] = True
+        def reset_direction(self, direction):
+            self.direction[direction] = False
+
         
         def reset_pos(self, colide_cell):
             if self.rect.left - self.old_rect[0] != 0:
@@ -206,8 +207,7 @@ init 1 python:
             self.finish = False
 
         def render(self, width, heigh, st, at):
-            score = renpy.render(Text('Score:'+str(self.p.rect.topleft)), 100,300,0,0)
-            # screen = renpy.Render(width, heigh)
+            score = renpy.render(Text('Score:'+','.join(map(lambda x:str(x),self.p.end_point))+'\n'+','.join(map(lambda x:str(x),self.m.end_point)) , color=RED), 100,300,0,0)
             screen = renpy.Render(VIEW_WIDTH, VIEW_HEIGHT)
             self.p.update()
             if self.m.colide(self.p.rect):
@@ -233,14 +233,24 @@ init 1 python:
                 player_pos = (self.p.rect.left - sub.left, self.p.rect.top - sub.top)
             
             screen.blit(self.m.image.subsurface(sub), (0,0))
-            screen.blit(score, (1000,100))
+            screen.blit(score, (400,100))
             screen.blit(self.p.image, player_pos)
 
             renpy.redraw(self, 0)
             return screen
 
         def event(self, ev, x, y , st):
-            if ev.type == pygame.KEYDOWN:
+            if ev.type == pygame.KEYUP:
+                # self.p.set_direction()
+                if ev.key == pygame.K_RIGHT:
+                    self.p.reset_direction(Direction.RIGHT)
+                elif ev.key == pygame.K_UP:
+                    self.p.reset_direction(Direction.UP)
+                elif ev.key == pygame.K_DOWN:
+                    self.p.reset_direction(Direction.DOWN)
+                elif ev.key == pygame.K_LEFT:
+                    self.p.reset_direction(Direction.LEFT)
+            elif ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_RIGHT:
                     self.p.set_direction(Direction.RIGHT)
                 elif ev.key == pygame.K_UP:
@@ -249,16 +259,10 @@ init 1 python:
                     self.p.set_direction(Direction.DOWN)
                 elif ev.key == pygame.K_LEFT:
                     self.p.set_direction(Direction.LEFT) 
-                else:
-                    self.p.set_direction()
-            elif ev.type == pygame.KEYUP:
-                self.p.set_direction()
             if self.finish:
                 return "You have arrived the end."
 
 screen maze():
-    # default ma = MinigameMaze()
-    # add ma
     add MinigameMaze():
         xalign 0.5
         yalign 0.5

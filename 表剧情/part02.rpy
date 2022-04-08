@@ -1,6 +1,7 @@
 label part2:
     scene 房间（暗） with circleirisin:
-        zoom 0.4
+        # zoom 0.4
+        size(1280,720)
     play music sei
     "醒过来时，发现身处一个漆黑的房间\n意識が戻った時、もう真っ暗の部屋にいる。"
     "没有光源，伸手不见五指，看不清周围的布置\n光源がないせいで、自分の手すら見えない暗闇に包まれていて、周りの配置も全然見えない。"
@@ -126,7 +127,8 @@ label find:
         $ quick_menu=True
 
         scene 房间（空） with fade:
-            zoom 0.4
+            # zoom 0.4
+            size(1280, 720)
         小东 "好了，应该是这样吧？"
         小东 "棒球，电影票，游戏截图\n我按顺序放下对应的三样物品后，门传来了解锁的声音"
         play sound 'audio/sound/door.mp3'
@@ -134,5 +136,6 @@ label find:
         
         jump part3
     scene 房间（空）:
-        zoom 0.4
+        # zoom 0.4
+        size(1280, 720)
     call screen find with fade
